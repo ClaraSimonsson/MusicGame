@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import Dashboard from './Dashboard'
-import Login from './Login'
+import Dashboard from './Components/Dashboard'
+import Login from './Components/Login'
 import './App.css';
+import DemoPlayer from './Components/DemoPlayer';
 
 function App() {
 
@@ -11,7 +12,6 @@ function App() {
     async function getToken() {
       const response = await fetch('/auth/token');
       const json = await response.json();
-      //console.log(json.access_token)
       setToken(json.access_token);
     }
 
@@ -20,7 +20,7 @@ function App() {
 
   return (
     <>
-        { (token === '') ? <Login/> : <Dashboard token={token} /> }
+        { (token === '') ? <Login/> : <DemoPlayer></DemoPlayer> }
     </>
   );
 }

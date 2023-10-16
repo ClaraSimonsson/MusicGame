@@ -23,13 +23,23 @@ var generateRandomString = function (length) {
 var app = express();
 
 app.get('/auth/login', (req, res) => {
-    var scope = "streaming user-read-email user-read-private"
+    const scopes = [
+      "user-read-currently-playing",
+      "user-read-recently-played",
+      "user-read-playback-state",
+      "user-modify-playback-state",
+      "streaming",
+      "playlist-read-collaborative",
+      "playlist-read-private",
+      "playlist-modify-public",
+      "user-library-modify"
+    ];
     var state = generateRandomString(16);
   
     var auth_query_parameters = new URLSearchParams({
       response_type: "code",
       client_id: spotify_client_id,
-      scope: scope,
+      scope: scopes,
       redirect_uri: spotify_redirect_uri,
       state: state
     })
@@ -68,7 +78,7 @@ app.get("/auth/refresh_token", (req, res) => {
     var refresh_token = req.query.refresh_token;
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
-      headers: { 'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64')) },
+      headers: { 'Authorization': 'Basic ' + (new Buffer.from(spotify_client_id + ':' + spotify_client_secret).toString('base64')) },
       form: {
         grant_type: 'refresh_token',
         refresh_token: refresh_token
@@ -85,6 +95,21 @@ app.get("/auth/refresh_token", (req, res) => {
       }
     });
   })
+
+app.get('/playlists', (req, res) => { 
+  const playlist_id = '5mQVbkcILLiU2aqVOplsMy';
+  var playlistOptions = {
+    url: 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks',
+    headers: { 'Authorization': 'Bearer ' + global.access_token },
+    json: true
+  };
+  console.log('Came to server!')
+  request.get(playlistOptions, function(error, response, body) {
+    if (!error && response.statusCode === 200) {
+      res.json({ playlists: body.items })
+  }
+  });
+})
 
 app.get('/auth/token', (req, res) => {
     res.json({ access_token: global.access_token })

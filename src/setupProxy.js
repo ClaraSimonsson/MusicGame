@@ -8,4 +8,8 @@ module.exports = function(app) {
     '/auth/**',
     createProxyMiddleware(proxy)
   );
+  app.use(
+    '/playlists',
+    createProxyMiddleware(proxy)
+  );
 };
