@@ -9,7 +9,7 @@ module.exports = function(app) {
     createProxyMiddleware(proxy)
   );
   app.use(
-    '/playlists',
+    '/playlists/**',
     createProxyMiddleware(proxy)
   );
 };

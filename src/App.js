@@ -20,7 +20,7 @@ function App() {
 
   return (
     <>
-        { (token === '') ? <Login/> : <DemoPlayer></DemoPlayer> }
+        { (token === '') ? <Login/> : <Dashboard token={token}/> }
     </>
   );
 }

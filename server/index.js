@@ -1,6 +1,7 @@
 const express = require('express');
 const request = require('request');
 const dotenv = require('dotenv');
+const bodyParser = require('body-parser')
 
 const port = 3001
 global.access_token = ''
@@ -21,12 +22,16 @@ var generateRandomString = function (length) {
 };
 
 var app = express();
+// create application/json parser
+var jsonParser = bodyParser.json()
 
 app.get('/auth/login', (req, res) => {
     const scopes = [
       "user-read-currently-playing",
       "user-read-recently-played",
       "user-read-playback-state",
+      "user-read-email", 
+      "user-read-private",
       "user-modify-playback-state",
       "streaming",
       "playlist-read-collaborative",
@@ -103,12 +108,58 @@ app.get('/playlists', (req, res) => {
     headers: { 'Authorization': 'Bearer ' + global.access_token },
     json: true
   };
-  console.log('Came to server!')
   request.get(playlistOptions, function(error, response, body) {
     if (!error && response.statusCode === 200) {
       res.json({ playlists: body.items })
   }
   });
+})
+
+
+/*
+curl --request PUT \
+  --url https://api.spotify.com/v1/me/player/play \
+  --header 'Authorization: Bearer 1POdFZRZbvb...qqillRxMr2z' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "context_uri": "spotify:album:5ht7ItJgpBH7W6vJ5BqpPr",
+    "offset": {
+        "position": 5
+    },
+    "position_ms": 0
+}'
+*/
+
+app.put('/playlists/playback', jsonParser, (req, res) => {
+  const device_id = req.body.device_id;
+  const playlist_id = '5mQVbkcILLiU2aqVOplsMy';
+  var playbackOptions = {
+    url: 'https://api.spotify.com/v1/me/player/play?device_id=' + device_id,
+    headers: { 
+      'Authorization': 'Bearer ' + global.access_token,
+      'Content-Type': 'application/json'
+    },
+    data: {
+      "context_uri": "spotify:playlist:" + playlist_id,
+      "offset": {
+          "position": 15
+      },
+      "position_ms": 0
+    }
+  };
+  console.log(playbackOptions)
+  request.put(playbackOptions, function(error, response, body) {
+    console.log(error, body)
+    console.log(response.headers)
+    console.log(response.statusCode)
+    //if (!error && response.statusCode === 204) {
+    //console.log('api request succeeded')
+      res.json({
+        status: response.statusCode,
+        message: response.headers,
+    });
+    //}
+  })
 })
 
 app.get('/auth/token', (req, res) => {
