@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Image } from "react-bootstrap";
+import logo from '../logo.svg';
 
 const track = {
     name: "",
@@ -13,7 +15,31 @@ const track = {
 }
 
 function DemoPlayer(props) {
-    const [playlist, setPlaylist] = useState();
+    const [is_paused, setPaused] = useState(false);
+    return (
+        <>
+        <div className="container">
+                <div className="main-wrapper">
+                    <Image src={logo} rounded/>
+                    <div className="now-playing__side">
+
+                        <button className="btn-spotify" onClick={() => {}} >
+                            &lt;&lt;
+                        </button>
+
+                        <button id="togglePlay" className="btn-spotify" onClick={() => { }} >
+                            {is_paused ? "PLAY" : "PAUSE"}
+                        </button>
+
+                        <button className="btn-spotify" onClick={() => { }} >
+                            &gt;&gt;
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+    /* const [playlist, setPlaylist] = useState();
     const [current_track, setTrack] = useState(track);
     const [is_paused, setPaused] = useState(false);
     const [is_active, setActive] = useState(false);
@@ -134,7 +160,7 @@ function DemoPlayer(props) {
                 </div>
             </div>
         </>
-    );
+    ); */
 }
 
 
