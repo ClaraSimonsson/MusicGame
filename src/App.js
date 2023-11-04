@@ -8,7 +8,6 @@ function App() {
 
   const [token, setToken] = useState('');
   useEffect(() => {
-
     async function getToken() {
       const response = await fetch('/auth/token');
       const json = await response.json();
