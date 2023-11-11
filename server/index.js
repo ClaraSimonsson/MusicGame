@@ -1,7 +1,9 @@
 const express = require('express');
 const request = require('request');
 const dotenv = require('dotenv');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const SpotifyWebApi =  require('spotify-web-api-js');
+
 
 const port = 3001
 global.access_token = ''
@@ -10,6 +12,7 @@ dotenv.config()
 var spotify_client_id = process.env.SPOTIFY_CLIENT_ID
 var spotify_client_secret = process.env.SPOTIFY_CLIENT_SECRET
 var spotify_redirect_uri = process.env.REDIRECT_URI
+const spotify = new SpotifyWebApi();
 
 var generateRandomString = function (length) {
   var text = '';
@@ -48,7 +51,6 @@ app.get('/auth/login', (req, res) => {
       redirect_uri: spotify_redirect_uri,
       state: state
     })
-  
     res.redirect('https://accounts.spotify.com/authorize/?' + auth_query_parameters.toString());
 });
   
@@ -73,6 +75,7 @@ app.get('/auth/callback', (req, res) => {
             request.post(authOptions, function(error, response, body) {
             if (!error && response.statusCode === 200) {
                 global.access_token = body.access_token;
+                spotify.setAccessToken(global.access_token);
                 res.redirect('/')
             }
             });
@@ -101,8 +104,18 @@ app.get("/auth/refresh_token", (req, res) => {
     });
   })
 
-app.get('/playlists', (req, res) => { 
+app.get('/playlists/getTracks', (req, res) => {
   const playlist_id = '5mQVbkcILLiU2aqVOplsMy';
+  console.log('Came to server!')
+  var playlistOptions = {
+    headers: { 'Authorization': 'Bearer ' + global.access_token },
+    json: true
+  }
+  spotify.getPlaylistTracks(playlist_id, playlistOptions).then( tracks => {
+    console.log(tracks)
+    //res.json({ playlists: tracks })
+  });
+  /*  
   var playlistOptions = {
     url: 'https://api.spotify.com/v1/playlists/' + playlist_id + '/tracks',
     headers: { 'Authorization': 'Bearer ' + global.access_token },
@@ -112,7 +125,7 @@ app.get('/playlists', (req, res) => {
     if (!error && response.statusCode === 200) {
       res.json({ playlists: body.items })
   }
-  });
+  }); */
 })
 
 
