@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/MusicGame/static/css/main.2f6e7e73.css",
+    "main.js": "/MusicGame/static/js/main.02326578.js",
+    "static/js/787.4679071a.chunk.js": "/MusicGame/static/js/787.4679071a.chunk.js",
+    "static/media/logo.svg": "/MusicGame/static/media/logo.6ce24c58023cc2f8fd88fe9d219db6c6.svg",
+    "index.html": "/MusicGame/index.html",
+    "main.2f6e7e73.css.map": "/MusicGame/static/css/main.2f6e7e73.css.map",
+    "main.02326578.js.map": "/MusicGame/static/js/main.02326578.js.map",
+    "787.4679071a.chunk.js.map": "/MusicGame/static/js/787.4679071a.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2f6e7e73.css",
+    "static/js/main.02326578.js"
+  ]
+}
