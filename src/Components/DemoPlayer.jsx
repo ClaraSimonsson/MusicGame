@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
 import logo from '../logo.svg';
+import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
+import { useCallback } from "react";
+import MyPlayer from "./MyPlayer";
 
 const track = {
     name: "",
@@ -14,27 +17,23 @@ const track = {
     ]
 }
 
-function DemoPlayer(props) {
+function DemoPlayer() {
     const [is_paused, setPaused] = useState(false);
+    const [playlist, setPlaylist] = useState();
+    /*     async function getPlaylist() {
+            await fetch('/playlists/getTracks')
+                .then((response) => {
+                    console.log(response.json());
+                });
+        }
+        getPlaylist(); */
+
+    
+    //const webPlaybackSDKReady = useWebPlaybackSDKReady();
     return (
         <>
-        <div className="container">
+            <div className="container">
                 <div className="main-wrapper">
-                    <Image src={logo} rounded/>
-                    <div className="now-playing__side">
-
-                        <button className="btn-spotify" onClick={() => {}} >
-                            &lt;&lt;
-                        </button>
-
-                        <button id="togglePlay" className="btn-spotify" onClick={() => { }} >
-                            {is_paused ? "PLAY" : "PAUSE"}
-                        </button>
-
-                        <button className="btn-spotify" onClick={() => { }} >
-                            &gt;&gt;
-                        </button>
-                    </div>
                 </div>
             </div>
         </>
