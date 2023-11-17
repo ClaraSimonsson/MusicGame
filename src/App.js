@@ -7,7 +7,7 @@ import DemoPlayer from './Components/DemoPlayer';
 function App() {
 
   const [token, setToken] = useState('');
-  useEffect(() => {
+/*   useEffect(() => {
     async function getToken() {
       const response = await fetch('/auth/token');
       const json = await response.json();
@@ -15,11 +15,11 @@ function App() {
     }
 
     getToken();
-  }, []);
+  }, []); */
 
   return (
     <>
-        { (token === '') ? <Login/> : <Dashboard token={token}/> }
+        { token ? <Dashboard token={token}/> : <Login setToken={setToken}/> }
     </>
   );
 }

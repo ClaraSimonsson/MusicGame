@@ -6,6 +6,7 @@ import { useCallback } from "react";
 function Dashboard(props) {
 
     const getOAuthToken = useCallback(callback => callback(props.token), []);
+    console.log(props.token)
     return (
         <div className="App">
             <header className="App-header">
