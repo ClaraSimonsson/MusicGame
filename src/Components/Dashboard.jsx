@@ -4,7 +4,6 @@ import MyPlayer from "./MyPlayer";
 import { useCallback } from "react";
 
 function Dashboard(props) {
-
     const getOAuthToken = useCallback(callback => callback(props.token), []);
     return (
         <div className="App">

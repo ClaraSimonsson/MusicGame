@@ -16,7 +16,6 @@ function App() {
 
     getToken();
   }, []);
-
   return (
     <>
         { (token === '') ? <Login/> : <Dashboard token={token}/> }

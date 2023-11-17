@@ -9,7 +9,7 @@ function MyPlayer(props) {
     const SPOTIFY_URI = "spotify:playlist:5mQVbkcILLiU2aqVOplsMy";
     const device = usePlayerDevice();
     const [game_started, setGameStarted] = useState(false);
-
+    console.log(device)
     async function startGame() {
         // Start playback
         await fetch(
