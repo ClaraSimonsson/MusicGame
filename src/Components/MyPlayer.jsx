@@ -1,14 +1,16 @@
-import { usePlaybackState, usePlayerDevice, useSpotifyPlayer, useWebPlaybackSDKReady } from "react-spotify-web-playback-sdk";
-import PauseResumeButton from "./PauseResumeButton"
-import SongTitle from "./SongInfo"
-import { useEffect, useState } from "react";
+import { usePlayerDevice } from "react-spotify-web-playback-sdk";
+import { useState } from "react";
+import ShowSongInfo from "./ShowSongInfo";
+import HideSongInfo from "./HideSongInfo";
+import PauseResumeButton from "./PauseResumeButton";
 
-function MyPlayer(props) {
-    const webPlaybackSDKReady = useWebPlaybackSDKReady();
-    const player = useSpotifyPlayer();
+
+function MyPlayer({ token }) {
     const SPOTIFY_URI = "spotify:playlist:5mQVbkcILLiU2aqVOplsMy";
     const device = usePlayerDevice();
     const [game_started, setGameStarted] = useState(false);
+    const [guessing, setGuessing] = useState(true);
+    const [is_paused, setPaused] = useState(false);
 
     async function startGame() {
         // Start playback
@@ -22,18 +24,18 @@ function MyPlayer(props) {
                 }),
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${props.token}`,
+                    Authorization: `Bearer ${token}`,
                 },
             },
         )
 
         // Enable shuffle mode
         await fetch(`https://api.spotify.com/v1/me/player/shuffle?state=true&device_id=${device.device_id}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${props.token}`,
-          },
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
         });
         setGameStarted(true);
     }
@@ -48,8 +50,8 @@ function MyPlayer(props) {
                         <h1>Which year was this song released?</h1>
                         <h2>If you succeed, what is the name of the title and artist?</h2>
                         <div className="now-playing__side">
-                            <SongTitle token={props.token} />
-                            <PauseResumeButton />
+                            {!guessing ? <ShowSongInfo token={token} setGuessing={setGuessing} setPaused={setPaused} /> : <HideSongInfo setGuessing={setGuessing} />}
+                            <PauseResumeButton is_paused={is_paused} setPaused={setPaused} />
                         </div>
                     </div>
                 </div>

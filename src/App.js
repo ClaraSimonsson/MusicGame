@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Dashboard from './Components/Dashboard'
 import Login from './Components/Login'
 import './App.css';
-import DemoPlayer from './Components/DemoPlayer';
 
 function App() {
 

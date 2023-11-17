@@ -1,16 +1,15 @@
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
-import DemoPlayer from "./DemoPlayer";
 import MyPlayer from "./MyPlayer";
 import { useCallback } from "react";
 
-function Dashboard(props) {
+function Dashboard({token}) {
 
-    const getOAuthToken = useCallback(callback => callback(props.token), []);
+    const getOAuthToken = useCallback(callback => callback(token), []);
     return (
         <div className="App">
             <header className="App-header">
-                <WebPlaybackSDK deviceName="Music Game Player" getOAuthToken={getOAuthToken} volume={0.5} connectOnInitialized={true}>
-                    <MyPlayer token={props.token}/>
+                <WebPlaybackSDK initialDeviceName="Music Game Player" getOAuthToken={getOAuthToken} initialVolume={0.5} connectOnInitialized={true}>
+                    <MyPlayer token={token}/>
                 </WebPlaybackSDK>
             </header>
         </div>

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Image } from "react-bootstrap";
 import { usePlaybackState } from "react-spotify-web-playback-sdk";
 
-function SongTitle(props) {
+function SongInfo(props) {
   const playbackState = usePlaybackState();
   const [trackYear, setTrackYear] = useState(null);
 
@@ -42,4 +42,4 @@ function SongTitle(props) {
       <div className="now-playing__artist">{current_track.artists[0].name}</div>
     </>);
 }
-export default SongTitle
+export default SongInfo

@@ -1,10 +1,9 @@
 import { usePlaybackState, useSpotifyPlayer } from "react-spotify-web-playback-sdk";
-import { useEffect, useState } from "react";
+import { Button } from "react-bootstrap";
 
-function PauseResumeButton() {
+function PauseResumeButton( {is_paused, setPaused} ) {
     const player = useSpotifyPlayer();
     const playbackState = usePlaybackState();
-    const [is_paused, setPaused] = useState(false);
 
     function playMusic() {
         player.resume();
@@ -21,11 +20,9 @@ function PauseResumeButton() {
     else {
         return (
             <div>
-                <button onClick={() => {player.previousTrack()}}>Previous</button>
-                <button id="togglePlay" className="btn-spotify" onClick={() => { is_paused ? playMusic() : pauseMusic() }} >
+                <Button onClick={() => { is_paused ? playMusic() : pauseMusic() }} >
                     {is_paused ? "PLAY" : "PAUSE"}
-                </button>
-                <button onClick={() => {player.nextTrack()}}>Next</button>
+                </Button>
             </div>
         );
     }
