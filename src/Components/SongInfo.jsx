@@ -6,7 +6,6 @@ function SongInfo(props) {
   const playbackState = usePlaybackState();
   const [trackYear, setTrackYear] = useState(null);
 
-
   useEffect(() => {
     if (playbackState === null) return;
 
@@ -20,16 +19,26 @@ function SongInfo(props) {
           Authorization: `Bearer ${props.token}`,
         }
       })
-      .then(response => response.json())
-      .then(data => {
-        year = new Date(data.album.release_date).getFullYear();
-      })
-      .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+          year = checkForExceptions(data);
+        })
+        .catch(error => console.error('Error:', error));
       setTrackYear(year);
     }
-
     getTrackYear(current_track.id);
   }, [playbackState]);
+
+  function checkForExceptions(data) {
+    switch (data.name) {
+      case "It's In The Kiss (The Shoop Shoop Song)":
+        return 1957;
+      case "Piece of My Heart":
+        return 1967;
+      default:
+        return new Date(data.album.release_date).getFullYear();
+    }
+  }
 
   if (playbackState === null) return null;
 
