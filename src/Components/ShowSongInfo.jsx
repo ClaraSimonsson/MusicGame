@@ -3,12 +3,12 @@ import SongInfo from './SongInfo';
 import { useSpotifyPlayer } from 'react-spotify-web-playback-sdk';
 import { Button } from 'react-bootstrap';
 
-const ShowSongInfo = ({ token, setGuessing, setPaused }) => {
+const ShowSongInfo = ({ token, gameState, setGameState }) => {
     const player = useSpotifyPlayer();
 
     const handleClick = () => {
-        setGuessing(true);
-        setPaused(false);
+        setGameState(prevState => ({ ...prevState, guessing: true }));
+        setGameState(prevState => ({ ...prevState, is_paused: false }));
         player.nextTrack();
     };
 
