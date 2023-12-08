@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import ShowSongInfo from "./ShowSongInfo";
 import HideSongInfo from "./HideSongInfo";
 import PauseResumeButton from "./PauseResumeButton";
+import Confetti from 'react-confetti';
 
 
 function MyPlayer({ token }) {
@@ -78,7 +79,10 @@ function MyPlayer({ token }) {
     } else {
         return (
             <div className="container">
+                <p className="wrong">Take a shot if you were wrong...</p>
+                <p className="force">Also, take a shot if are able to see this...</p>
                 <div className="main-wrapper">
+                    <Confetti />
                     <h1>Which year was this song released?</h1>
                     <h2>If you succeed, what is the name of the title and artist?</h2>
                     <div className="now-playing__side">
@@ -89,6 +93,7 @@ function MyPlayer({ token }) {
                         }
                         <PauseResumeButton gameState={gameState} setGameState={setGameState} />
                     </div>
+                    <Confetti />
                 </div>
             </div>
         );
