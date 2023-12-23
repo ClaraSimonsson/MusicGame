@@ -35,6 +35,10 @@ function SongInfo(props) {
         return 1957;
       case "Piece of My Heart":
         return 1967;
+      case "These Boots Are Made for Walkin'":
+        return 1965;
+      case "Iron Lion Zion - 7\" Mix":
+        return 1992;
       default:
         return new Date(data.album.release_date).getFullYear();
     }
