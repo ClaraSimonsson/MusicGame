@@ -39,6 +39,10 @@ function SongInfo(props) {
         return 1965;
       case "Iron Lion Zion - 7\" Mix":
         return 1992;
+      case "Pata Pata - Stereo Version":
+        return 1967;
+      case "Tainted Love - Single Version":
+        return 1965;
       default:
         return new Date(data.album.release_date).getFullYear();
     }
