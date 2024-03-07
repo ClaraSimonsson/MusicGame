@@ -7,7 +7,9 @@ import Confetti from 'react-confetti';
 
 
 function MyPlayer({ token }) {
-    const SPOTIFY_URI = "spotify:playlist:5mQVbkcILLiU2aqVOplsMy";
+    
+    //spotify:playlist:5mQVbkcILLiU2aqVOplsMy - Hitster
+    const SPOTIFY_URI = "spotify:album:06O9GpgtDESYZkUfhKpFcK";
     const device = usePlayerDevice();
     const [gameState, setGameState] = useState(() => {
         const savedGameState = sessionStorage.getItem('game_state');
@@ -36,7 +38,7 @@ function MyPlayer({ token }) {
                 method: "PUT",
                 body: JSON.stringify({
                     context_uri: SPOTIFY_URI,
-                    offset: { position: Math.floor(Math.random() * 251) }
+                    offset: { position: 0 } //position: Math.floor(Math.random() * 251)
                 }),
                 headers: {
                     "Content-Type": "application/json",
