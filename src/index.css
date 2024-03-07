@@ -13,19 +13,19 @@ code {
 }
 
 .wrong {
-  font-size: 8px;
+  font-size: 10px;
   color: #09CDDA;
   position: fixed;
   top: 0;
   left: 0;
-  opacity: 0.1;
+  opacity: 0.35;
 }
 
 .force {
-  font-size: 6px;
+  font-size: 8px;
   color: #09CDDA; 
   position: fixed;
   bottom: 0;
   right: 0em;
-  opacity: 0.1;
+  opacity: 0.25;
 }
