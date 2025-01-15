@@ -6,100 +6,80 @@ import { DiscogsClient } from '@lionralfs/discogs-client';
 function SongInfo(props) {
   const playbackState = usePlaybackState();
   const [trackYear, setTrackYear] = useState(null);
-  const db = new DiscogsClient({ auth: { userToken: 'nalQJToGqxVvJEFxrptuleWRwTQfhwHMtFvOXQsr' } }).database();
+  const db = new DiscogsClient({ auth: { userToken: process.env.REACT_APP_DISCOGS_TOKEN } }).database();
   useEffect(() => {
     if (playbackState === null) return;
 
     const current_track = playbackState.track_window.current_track;
 
     async function getTrackYear(track_id) {
-      let year = 0;
-      await fetch(`https://api.spotify.com/v1/tracks/${track_id}`, {
+      const response = await fetch(`https://api.spotify.com/v1/tracks/${track_id}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${props.token}`,
         }
       })
-        .then(response => response.json())
-        .then(data => {
-          let spotify_artist = data.artists[0].name
-          db.search({ release_title: data.name, artist: spotify_artist, type: 'master' })
-            .then(function ({ data }) {
-              let earliestYear = Infinity; // Start with a very large year
-              let earliestMaster = {};
-              for (let result of data.results) {
-                console.log(result)
-                let id = result.id;
-                if (id) {
-                  db.getMaster(id)
-                  .then( master => {
-                    console.log('Master ' + master)
-                    if  (master.artists.name === spotify_artist) {
-                      if (master.year < earliestYear) {
-                        earliestYear = master.year;
-                        earliestMaster = master
-                      }
-                    }
-                  })
-                  .catch(function (error) {
-                    console.error('Error:', error);
-                    console.log(error)
-                  })
-                }
-              }
-              return earliestMaster;
-            })
-        .then(function ({ data }) {
-              if (data) {
-                console.log(data)
-                setTrackYear(data.year);
-              }
-              else {
-                year = checkForExceptions(data);
-                console.log('Year is: ' + year)
-                if (year === null) {
-                  year = 0;
-                }
-                setTrackYear(year);
-              }
-        })
-        .catch(function (error) {
-              if (error) {
-                year = checkForExceptions(data);
-                console.log('Year is: ' + year)
-                if (year === null) {
-                  year = 0;
-                }
-                setTrackYear(year);
-            }
-        });
-      })
-      .catch(error => console.error('Error:', error));
+      const jsonData = await response.json();
+      const spotify_artists = jsonData.artists[0].name.includes('&') ? jsonData.artists[0].name.split('&').map(artist => artist.trim()) : [jsonData.artists[0].name];
+      const spotifyTitle = jsonData.name.includes('-') ? jsonData.name.split('-')[0].trim() : jsonData.name;
+
+      const discogsResult = await db.search({ query: spotify_artists + ' - ' + spotifyTitle, type: 'master' })
+      const spotifyArtistRegexes = createArtistRegexes(spotify_artists);
+      const spotifyTitleRegexes = createTitleRegexes(jsonData.name);
+
+      let matchingDiscogsResult = findMatches(discogsResult, spotifyTitleRegexes, spotifyArtistRegexes);
+      const discogsMasters = await Promise.all(matchingDiscogsResult.map(result => db.getMaster(result.id)))
+      const year = findLowestMatchingYear(discogsMasters);
+      setTrackYear(year);
     }
     getTrackYear(current_track.id);
-  }, [playbackState]);
+  }, [playbackState?.track_window.current_track.id, props.token]);
 
-  function checkForExceptions(data) {
-    switch (data.name) {
-      case "It's In The Kiss (The Shoop Shoop Song)":
-        return 1957;
-      case "Piece of My Heart":
-        return 1967;
-      case "These Boots Are Made for Walkin'":
-        return 1965;
-      //case "Iron Lion Zion - 7\" Mix":
-      //  return 1992;
-      case "Tainted Love - Single Version":
-        return 1965;
-      case "You Can Call Me Al":
-        return 1986;
-      default:
-        return new Date(data.album.release_date).getFullYear();
+function createArtistRegexes(spotify_artists) {
+  return spotify_artists.map(artist => new RegExp(artist.split(' ').join('.*'), 'i'));
+}
+
+  function createTitleRegexes(spotifyTitle) {
+    let spotifyTitleRegexes;
+    if (spotifyTitle.includes(' - ')) {
+      const [spotifyTitleBeforeDash, spotifyTitleAfterDash] = spotifyTitle.split(' - ').map(part => part.trim());
+      spotifyTitleRegexes = [
+        new RegExp(`\\b${spotifyTitle.split(' ').join('\\b.*\\b')}\\b`, 'i'),
+        new RegExp(`\\b${spotifyTitleBeforeDash.split(' ').join('\\b.*\\b')}\\b`, 'i'),
+        new RegExp(`\\b${spotifyTitleAfterDash.split(' ').join('\\b.*\\b')}\\b`, 'i')
+      ];
+    } else {
+      spotifyTitleRegexes = [
+        new RegExp(`\\b${spotifyTitle.split(' ').join('\\b.*\\b')}\\b`, 'i')
+      ];
     }
+    return spotifyTitleRegexes;
+  }
+
+  function findMatches(discogsResult, spotifyTitleRegexes, spotifyArtistRegexes) {
+    let matchingDiscogsResult = []
+    for (let result of discogsResult.data.results) {
+      const resultData = result.title.split(' - ');
+      const artistName = resultData[0];
+      const title = resultData[1];
+      if (spotifyTitleRegexes.some(regex => regex.test(title)) && spotifyArtistRegexes.some(regex => regex.test(artistName))) {
+        matchingDiscogsResult.push(result);
+      }
+    }
+    return matchingDiscogsResult;
+  }
+
+  function findLowestMatchingYear(discogsMasters) {
+    let year = Infinity;
+    for (let master of discogsMasters) {
+      if (master.data.year !== 0 && master.data.year < year) {
+        year = master.data.year;
+      }
+    }
+    return year;
   }
 
   if (playbackState === null) return null;
-
   const current_track = playbackState.track_window.current_track;
   if (trackYear === null) return (<div></div>);
   else {
